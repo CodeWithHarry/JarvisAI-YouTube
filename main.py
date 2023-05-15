@@ -1,5 +1,7 @@
 import speech_recognition as sr
 import os
+##For Windows##
+#import win32com.client
 import webbrowser
 import openai
 from config import apikey
@@ -7,6 +9,7 @@ import datetime
 import random
 import numpy as np
 
+##speaker = win32com.client.Dispatch("SAPI.SpVoice")
 
 chatStr = ""
 # https://youtu.be/Z3ZAJoi4x6Q
@@ -72,6 +75,7 @@ def takeCommand():
 if __name__ == '__main__':
     print('Welcome to Jarvis A.I')
     say("Jarvis A.I")
+    ## speaker.speak("")
     while True:
         print("Listening...")
         query = takeCommand()
