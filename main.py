@@ -1,3 +1,4 @@
+#J.A.R.V.I.S A.I Speech Assistant
 import speech_recognition as sr
 import os
 import webbrowser
@@ -14,45 +15,54 @@ def chat(query):
     global chatStr
     print(chatStr)
     openai.api_key = apikey
-    chatStr += f"Harry: {query}\n Jarvis: "
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt= chatStr,
-        temperature=0.7,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    # todo: Wrap this inside of a  try catch block
-    say(response["choices"][0]["text"])
-    chatStr += f"{response['choices'][0]['text']}\n"
-    return response["choices"][0]["text"]
+    chatStr += f"Sir: {query}\n Jarvis: "
 
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt= chatStr,
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        reply = response["choices"][0]["text"]
+        say(reply)
+        chatStr += f"{reply}\n"
+        return reply
+    except Exception as e:
+        say("Sorry, I could not reach OpenAI.")
+        print(f"[ERROR] OpenAI chat failed: {e}")
+        return "OpenAI chat failed."
 
 def ai(prompt):
     openai.api_key = apikey
     text = f"OpenAI response for Prompt: {prompt} \n *************************\n\n"
 
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        temperature=0.7,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    # todo: Wrap this inside of a  try catch block
-    # print(response["choices"][0]["text"])
-    text += response["choices"][0]["text"]
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        text += response["choices"][0]["text"]
+    except Exception as e:
+        say("Sorry, something went wrong while generating the response.")
+        print(f"[ERROR] OpenAI AI function failed: {e}")
+        return
+
     if not os.path.exists("Openai"):
         os.mkdir("Openai")
 
-    # with open(f"Openai/prompt- {random.randint(1, 2343434356)}", "w") as f:
-    with open(f"Openai/{''.join(prompt.split('intelligence')[1:]).strip() }.txt", "w") as f:
+    filename = f"Openai/{''.join(prompt.split('intelligence')[1:]).strip()}.txt"
+    with open(filename, "w") as f:
         f.write(text)
-
+        
 def say(text):
     os.system(f'say "{text}"')
 
